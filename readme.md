@@ -158,6 +158,58 @@ Availability of various options(depends on the version of `WindowsAppSDK` you ar
 | Borderless   | 🔷                    | 🟢 from 1.1.0-preview |
 | Animations   | 🟢, but with borders  | 🟢 from 1.1.0-preview |
 | Submenus     | 🔷                    | 🔷                    |
+#### ICommand support
+The sample code priovided application contains an example of ICommand usage through the API of the CommunityToolkit:
+
+H.NotifyIcon.Apps.WinUI\Views\TrayIconView.xaml.cs
+```xaml
+...
+ <tb:TaskbarIcon.ContextFlyout>
+     <MenuFlyout AreOpenCloseAnimationsEnabled="False">
+         <MenuFlyoutItem Command="{x:Bind ShowHideWindowCommand}" Text="Show/Hide Window" />
+...
+```
+
+H.NotifyIcon.Apps.WinUI\Views\TrayIconView.xaml.cs
+```c#
+...
+
+    [RelayCommand]
+    public void ExitApplication()
+    {
+        App.HandleClosedEvents = false;
+        TrayIcon.Dispose();
+        App.MainWindow?.Close();
+    }
+...
+```
+
+However, if you do not want to depend on the CommunityToolkit:
+
+```C#
+
+class TheClassDefinedInXaml
+{
+    public ICommand ExitApplication = new ExitApplicationCommand();
+
+    ...
+
+    private ExitApplicationCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+         public bool CanExecute(object parameter)
+        {
+             return true; // or use any state you want to evaluate this   
+        }
+
+        public void Execute(object parameter)
+        {
+            // Run your action here
+        }
+    }
+}
+```
 
 #### Behavior that needs attention
 
